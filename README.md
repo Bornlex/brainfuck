@@ -47,7 +47,7 @@ All brainfuck instructions are not supported in this environment, not because th
 
 ## Usage
 
-To use the custom environment, you can follow the example script provided in the repository. This script demonstrates how to initialize the environment and run a simple agent.
+To use the custom environment, you can follow the following script. This script demonstrates how to initialize the environment and run a simple agent.
 
 ### Testing agent
 
