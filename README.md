@@ -33,14 +33,17 @@ All brainfuck instructions are not supported in this environment, not because th
 1. Clone the repository:
    ```bash
    git clone <your-repository-url>
-   cd <your-repository-name>```
+   cd <your-repository-name>
+   ```
 2. Create a venv:
    ```bash
    python -m venv venv
-   source venv/bin/activate```
+   source venv/bin/activate
+   ```
 3. Install the required libraries:
    ```bash
-   pip install -r requirements.txt```
+   pip install -r requirements.txt
+   ```
 
 ## Usage
 
