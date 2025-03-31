@@ -5,3 +5,4 @@ converter
 .env**
 **.gguf
 **.sh
+**.jsonl

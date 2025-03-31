@@ -14,7 +14,7 @@ class LocalLLMClient(LLMClient):
             response = self.__do_request(messages)
 
             try:
-                answer = json.loads(response)["content"]
+                answer = json.loads(response)
                 return answer
             except (json.JSONDecodeError, KeyError):
                 retry -= 1
