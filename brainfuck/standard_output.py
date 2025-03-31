@@ -18,3 +18,7 @@ class StandardOutput:
 
     def raw(self):
         return self.__queue
+
+    def reset(self):
+        self.__queue = [0] * len(self.__queue)
+        self.__pointer = 0

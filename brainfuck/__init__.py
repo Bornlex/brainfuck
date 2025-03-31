@@ -6,6 +6,7 @@ from typing import Optional, Any, SupportsFloat
 
 from brainfuck.memory import Memory
 from brainfuck.standard_output import StandardOutput
+from brainfuck.utils import reward
 
 
 class Actions(Enum):
@@ -61,7 +62,11 @@ class Brainfuck(gymnasium.Env):
 
     In brainfuck specs, the memory is of size 30.000, but we can change it here to simplify the environment.
     """
-    def __init__(self, memory_size: int = 1000):
+    def __init__(
+            self,
+            memory_size: int = 1000,
+            standard_output_size: int = 100
+    ):
         self.__memory_size = memory_size
         self.__action_size = 5 + 1
         self.__ascii_max_value = 256
@@ -69,9 +74,10 @@ class Brainfuck(gymnasium.Env):
         self.__max_signed_value = max(
             self.__ascii_max_value, (self.__counter_max_value - 1) // 2
         )
-        self.__standard_output_size = 100
+        self.__standard_output_size = standard_output_size
 
         self.__max_steps = 100
+        self.__max_reward = -(self.__max_steps * reward.INSTRUCTION_PENALTY) * 10
 
         self.__memory = Memory(size=self.__memory_size)
         self.__standard_output = StandardOutput(max_size=self.__standard_output_size)
@@ -102,6 +108,7 @@ class Brainfuck(gymnasium.Env):
         self.__pointer = 0
         self.__current_step = 0
         self.__memory.reset()
+        self.__standard_output.reset()
 
         return (
             self.__get_state(),
@@ -130,7 +137,13 @@ class Brainfuck(gymnasium.Env):
         self.__current_step += 1
 
         if action == Actions.NOP:
-            return self.__get_state(), 0, True, False, self.__get_info()
+            return (
+                self.__get_state(),
+                self.__compute_final_reward(),
+                True,
+                False,
+                self.__get_info()
+            )
         elif action == Actions.INCREMENT_POINTER:
             self.__increment_pointer()
         elif action == Actions.DECREMENT_POINTER:
@@ -146,7 +159,7 @@ class Brainfuck(gymnasium.Env):
 
         return (
             self.__get_state(),
-            0,
+            reward.INSTRUCTION_PENALTY,
             False,
             self.__current_step >= self.__max_steps,
             self.__get_info()
@@ -158,6 +171,14 @@ class Brainfuck(gymnasium.Env):
         """
         if mode == 'human':
             print(self.__standard_output.read())
+
+    def __compute_final_reward(self) -> float:
+        distance = reward.levenshtein_distance(
+            self.__standard_output.read(),
+            self.__expected_output
+        )
+
+        return min(0, self.__max_reward - distance)
 
     def __increment_pointer(self):
         if self.__pointer < self.__memory_size - 1:

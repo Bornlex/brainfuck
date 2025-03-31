@@ -2,3 +2,6 @@
 .venv
 .idea
 converter
+.env**
+**.gguf
+**.sh
