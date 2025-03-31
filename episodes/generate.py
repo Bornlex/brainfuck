@@ -44,7 +44,8 @@ if __name__ == '__main__':
     with open(args.output, 'w') as output_file:
         for i in range(args.number):
             problem = client.generate_problem()
-            json.dump(problem, output_file)
+            line = json.dumps(problem)
+            output_file.write(f'{line}\n')
 
             if i > 0 and i % modulo == 0:
                 output_file.flush()
